@@ -2,5 +2,6 @@
 ./mysql/data/*
 *.old
 .idea
+./.idea
 error_log
 access_log
