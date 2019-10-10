@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  # The server
+  application:
+    container_name: app_centos_con
+    build:
+      context: app
+    working_dir: /var/www/html/project
+    volumes:
+      - ${PROJECT_PATH}:/var/www/html/project
+      - ./app/nginx/logs:/var/log/nginx
+    ports:
+      - 7080:80
+    links:
+      - mysql
+      - php
+    env_file: .env
+  php:
+    container_name: app_php_con
+    build:
+      context: php
+    ports:
+      - 9696:9000
+    volumes:
+      - ${PROJECT_PATH}:/var/www/html/project
+  mysql:
+    container_name: app_mysql_con
+    build:
+      context: mysql
+    ports:
+      - 7306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PWD}
+      MYSQL_DATABASE: ${MYSQL_NAME}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PWD}
+    command: mysqld --sql_mode=""
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/loging.cnf:/etc/mysql/conf.d/loging.cnf
+    env_file: .env
+
+networks:
+  default: {}
